@@ -128,11 +128,10 @@ public class MobileServiceImpli implements MoblieService {
 		return findByMobiles;
 	}
 
-	
+	@Override
 	public List<Mobile> sortedmethodfilter(String brand, Double minPrice, Double maxPrice) {
 
-		return mobiledao.findAll().stream()
-				.filter(m -> brand == null || m.getMobileBrand().equalsIgnoreCase(brand))
+		return mobiledao.findAll().stream().filter(m -> brand == null || m.getMobileBrand().equalsIgnoreCase(brand))
 				.filter(m -> minPrice == null || m.getMobilePrice() >= minPrice)
 				.filter(m -> maxPrice == null || m.getMobilePrice() <= maxPrice).collect(Collectors.toList());
 	}
