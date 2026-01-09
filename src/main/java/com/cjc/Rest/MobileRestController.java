@@ -44,8 +44,8 @@ public class MobileRestController {
 		return getallmobiles;
 	
 	}
-	@GetMapping(value = "/getallxmlmobiles", consumes = {"application/xml"}, produces = {"application/xml"})
-	public MobileXml getallmobilesXMl( ){
+	@GetMapping(value = "/getallxmlmobiles", produces = {"application/xml"})
+	public MobileXml getallmobilesXMl(){
 		List<Mobile> getmobilesxml = mobileservice.getmobilesxml();
 		MobileXml mx=new MobileXml();
 		mx.setMobliexml(getmobilesxml);

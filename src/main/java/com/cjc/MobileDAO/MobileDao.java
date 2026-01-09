@@ -14,19 +14,4 @@ public interface MobileDao extends JpaRepository<Mobile, Integer>{
 	
 	List<Mobile> findByMobileName(String mobileName);
 	
-	@Query(
-			 "SELECT mob FROM Mobile mob " +
-					 "WHERE (:mobileBrand IS NULL OR mob.mobileBrand = :mobileBrand) " +
-					 "AND (:minmobilePrice IS NULL OR mob.mobilePrice >= :minmobilePrice) " +
-					 "AND (:maxmobilePrice IS NULL OR mob.mobilePrice <= :maxmobilePrice)"
-			
-			)
-	
-	List<Mobile> filterMobiles(
-			
-			@Param("mobileBrand") String mobileBrand,
-			@Param("minmobilePrice") Double minmobilePrice,
-			@Param("maxmobilePrice") Double maxmobilePrice	
-		);
-
 }

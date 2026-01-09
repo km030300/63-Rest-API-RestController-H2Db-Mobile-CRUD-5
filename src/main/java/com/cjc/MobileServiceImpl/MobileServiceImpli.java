@@ -1,6 +1,8 @@
 package com.cjc.MobileServiceImpl;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +14,7 @@ import com.cjc.MobileService.MoblieService;
 
 @Service
 public class MobileServiceImpli implements MoblieService {
-	
+
 	private MobileDao mobiledao;
 
 	public MobileServiceImpli(MobileDao mobiledao) {
@@ -42,9 +44,9 @@ public class MobileServiceImpli implements MoblieService {
 			mobile.setMobileName(mob.getMobileName());
 			mobile.setMobileBrand(mob.getMobileBrand());
 			mobile.setMobilePrice(mob.getMobilePrice());
-			
+
 			return mobiledao.save(mobile);
-			
+
 		}
 		return null;
 	}
@@ -53,15 +55,15 @@ public class MobileServiceImpli implements MoblieService {
 	public Mobile editproduct(Integer id, Mobile mob) {
 		if (mobiledao.existsById(id)) {
 			Mobile mobile = mobiledao.findById(id).get();
-			if (mob.getMobileName()!=null) {
+			if (mob.getMobileName() != null) {
 				mobile.setMobileName(mob.getMobileName());
-				
+
 			}
-			if (mob.getMobileBrand()!=null) {
+			if (mob.getMobileBrand() != null) {
 				mobile.setMobileBrand(mob.getMobileBrand());
-				
+
 			}
-			if (mob.getMobilePrice()!=null) {
+			if (mob.getMobilePrice() != null) {
 				mobile.setMobilePrice(mob.getMobilePrice());
 			}
 			return mobiledao.save(mobile);
@@ -83,40 +85,39 @@ public class MobileServiceImpli implements MoblieService {
 
 	@Override
 	public String deletemobile(Integer id) {
-		String msg="";
+		String msg = "";
 		if (mobiledao.existsById(id)) {
-			 mobiledao.deleteById(id);
-			msg="ID Deleted Successfully"+id;
+			mobiledao.deleteById(id);
+			msg = "ID Deleted Successfully" + id;
 			return msg;
 		}
-		msg="ID Not Found/Existed"+id;
+		msg = "ID Not Found/Existed" + id;
 		return msg;
 	}
 
-	//Pagination
+	// Pagination
 	@Override
 	public List<Mobile> putpagination(int pageNumber, int pagesize) {
-		Pageable page= PageRequest.of(pageNumber, pagesize);
-	      Page<Mobile> findAll = mobiledao.findAll(page);
-		
+		Pageable page = PageRequest.of(pageNumber, pagesize);
+		Page<Mobile> findAll = mobiledao.findAll(page);
+
 		if (findAll.hasContent()) {
-		 List<Mobile> content = findAll.getContent();
+			List<Mobile> content = findAll.getContent();
 			return content;
 		}
-		
+
 		return null;
 	}
 
 	@Override
 	public List<Mobile> getmobilebyprice(String direction) {
-	   
+
 		Sort sort;
-	
-		if (direction!=null && direction.equalsIgnoreCase("desc")) {
+
+		if (direction != null && direction.equalsIgnoreCase("desc")) {
 			sort = Sort.by(Sort.Direction.DESC, "mobilePrice");
-		}
-		else {
-			sort=Sort.by(Sort.Direction.ASC,"mobilePrice");
+		} else {
+			sort = Sort.by(Sort.Direction.ASC, "mobilePrice");
 		}
 		return mobiledao.findAll(sort);
 	}
@@ -127,11 +128,13 @@ public class MobileServiceImpli implements MoblieService {
 		return findByMobiles;
 	}
 
-	@Override
-	public List<Mobile> sortedmethodfilter(String mobileBrand, Double minmobilePrice, Double maxmobilePrice) {
-		List<Mobile> filterMobiles = mobiledao.filterMobiles(mobileBrand, minmobilePrice, maxmobilePrice);
-		
-		return filterMobiles;
+	
+	public List<Mobile> sortedmethodfilter(String brand, Double minPrice, Double maxPrice) {
+
+		return mobiledao.findAll().stream()
+				.filter(m -> brand == null || m.getMobileBrand().equalsIgnoreCase(brand))
+				.filter(m -> minPrice == null || m.getMobilePrice() >= minPrice)
+				.filter(m -> maxPrice == null || m.getMobilePrice() <= maxPrice).collect(Collectors.toList());
 	}
 
 }
